@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class CameraController : MonoBehaviour
 {
@@ -21,13 +19,13 @@ public class CameraController : MonoBehaviour
         float vert = Input.GetAxis("Vertical");
         float hor = Input.GetAxis("Horizontal");
 
-        if(vert != 0 || hor != 0)
+        if (vert != 0 || hor != 0)
         {
             targetPos += (Vector3.forward * vert + hor * Vector3.right).normalized * moveSpeed;
         }
 
         float scroll = Input.GetAxis("Mouse ScrollWheel");
-        if(scroll != 0)
+        if (scroll != 0)
         {
             yPos += -Mathf.Sign(scroll) * zoomSpeed;
             yPos = Mathf.Clamp(yPos, 1, 100);

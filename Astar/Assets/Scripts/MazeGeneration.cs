@@ -1,6 +1,8 @@
 using System.Collections.Generic;
+using Unity.Burst;
 using UnityEngine;
 
+[BurstCompile]
 public class MazeGeneration : MonoBehaviour
 {
     public int width = 10, height = 10;
@@ -32,6 +34,7 @@ public class MazeGeneration : MonoBehaviour
         }
     }
 
+    [BurstCompile]
     private void DestroyMazeObjects()
     {
         allCellObjects.Clear();
@@ -41,6 +44,7 @@ public class MazeGeneration : MonoBehaviour
         }
     }
 
+    [BurstCompile]
     public void GenerateMaze()
     {
         grid = new Cell[width, height];
@@ -112,6 +116,8 @@ public class MazeGeneration : MonoBehaviour
             }
         }
     }
+
+    [BurstCompile]
     private int GetWallCount(Cell[,] grid)
     {
         int walls = 0;
@@ -126,8 +132,6 @@ public class MazeGeneration : MonoBehaviour
         return walls;
     }
 
-
-
     /// <summary>
     /// Gets the unvisited neighbours for a cell
     /// </summary>
@@ -135,6 +139,8 @@ public class MazeGeneration : MonoBehaviour
     /// <param name="visitedCells"></param>
     /// <param name="cellstack"></param>
     /// <returns></returns>
+    /// 
+    [BurstCompile]
     private List<Cell> GetUnvisitedNeighbours(Cell cell, List<Cell> visitedCells, Stack<Cell> cellstack)
     {
         List<Cell> result = new List<Cell>();
@@ -164,6 +170,7 @@ public class MazeGeneration : MonoBehaviour
     /// </summary>
     /// <param name="cellOne"></param>
     /// <param name="cellTwo"></param>
+    [BurstCompile]
     private bool RemoveWallBetweenCells(Cell cellOne, Cell cellTwo)
     {
         int numWallCellOne = cellOne.GetNumWalls();
@@ -184,6 +191,7 @@ public class MazeGeneration : MonoBehaviour
         return false;
     }
 
+    [BurstCompile]
     public Cell GetCellForWorldPosition(Vector3 worldPos)
     {
         return grid[(int)(Mathf.RoundToInt(worldPos.x) / scaleFactor), (int)(Mathf.RoundToInt(worldPos.z) / scaleFactor)];

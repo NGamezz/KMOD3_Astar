@@ -18,6 +18,12 @@ public class Astar
         gridSize = new(grid.GetLength(0), grid.GetLength(1));
         newPath.Clear();
 
+        if (!IsValidPositionInGrid(endPos, gridSize))
+        {
+            Debug.LogWarning("Not a valid position in the grid.");
+            return new List<int2>();
+        }
+
         NativeArray<Wall> walls = new(gridSize.x * gridSize.y, Allocator.TempJob);
 
         for (int x = 0; x < gridSize.x; x++)
@@ -154,6 +160,8 @@ public class Astar
                 wallsOffsetCurrentNode.Dispose();
             }
         }
+
+        if (endNodeIndex >= nodePath.Length || endNodeIndex < 0) { return; }
 
         Node endNode = nodePath[endNodeIndex];
         if (endNode.PreviousNodeIndex == -1)

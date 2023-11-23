@@ -5,6 +5,10 @@ using Unity.Mathematics;
 using Unity.Collections;
 using System.Linq;
 
+/// <summary>
+/// AStar using the burst compiler. It was created with Jobs in mind, but jobs didn't end up being needed. The algorithm was inspired by Code Monkey's Video on ECS pathfinding.
+/// </summary>
+
 [BurstCompile]
 public class Astar
 {
@@ -71,7 +75,6 @@ public class Astar
             }
         }
 
-        //Offsets for the neighbouring nodes.
         NativeArray<int2> neighbourOffsetArray = new(8, Allocator.Temp);
         neighbourOffsetArray[0] = new int2(-1, 0);
         neighbourOffsetArray[1] = new int2(+1, 0);

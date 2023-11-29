@@ -728,7 +728,7 @@ MonoBehaviour:
   scaleFactor: 1
   cellPrefab: {fileID: 8932503495734551348, guid: be3d5e704eab71c4aa3e4cdd60fda5de,
     type: 3}
-  desiredWallpercentage: 0.55
+  desiredWallpercentage: 0.6
   seed: 1234
 --- !u!4 &1444179295
 Transform:

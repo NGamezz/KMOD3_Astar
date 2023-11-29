@@ -5,23 +5,23 @@ using Unity.Mathematics;
 using Unity.Collections;
 using System.Linq;
 
+//Inspired By Code Monkey's ECS Video.
 [BurstCompile]
 public class Astar
 {
-    [SerializeField] private int2 gridSize;
-    [ReadOnly] private const int StraightCost = 10;
+    private int2 gridSize;
     private NativeList<int2> newPath = new(Allocator.Persistent);
 
     [BurstCompile]
-    public List<int2> FindPathToTarget(int2 startPos, int2 endPos, Cell[,] grid)
+    public List<Vector2Int> FindPathToTarget(Vector2Int startPos, Vector2Int endPos, Cell[,] grid)
     {
         gridSize = new(grid.GetLength(0), grid.GetLength(1));
         newPath.Clear();
 
-        if (!IsValidPositionInGrid(endPos, gridSize))
+        if (!IsValidPositionInGrid(new int2(endPos.x, endPos.y), gridSize))
         {
             Debug.LogWarning("Not a valid position in the grid.");
-            return new List<int2>();
+            return new List<Vector2Int>();
         }
 
         NativeArray<Wall> walls = new(gridSize.x * gridSize.y, Allocator.TempJob);
@@ -35,12 +35,12 @@ public class Astar
             }
         }
 
-        FindPath(startPos, endPos, walls);
-        List<int2> tempPath = new();
+        FindPath(new int2(startPos.x, startPos.y), new int2(endPos.x, endPos.y), walls);
+        List<Vector2Int> tempPath = new();
 
         foreach (int2 position in newPath)
         {
-            tempPath.Add(position);
+            tempPath.Add(new Vector2Int(position.x, position.y));
         }
         tempPath.Reverse();
 
@@ -72,7 +72,7 @@ public class Astar
         }
 
         //Offsets for the neighbouring nodes.
-        NativeArray<int2> neighbourOffsetArray = new(8, Allocator.Temp);
+        NativeArray<int2> neighbourOffsetArray = new(4, Allocator.Temp);
         neighbourOffsetArray[0] = new int2(-1, 0);
         neighbourOffsetArray[1] = new int2(+1, 0);
         neighbourOffsetArray[2] = new int2(0, +1);
@@ -143,7 +143,7 @@ public class Astar
                     continue;
                 }
 
-                int GCost = currentNode.GScore + EstimateDistanceCost(currentNode.Position, neighBourNode.Position);
+                var GCost = currentNode.GScore + EstimateDistanceCost(currentNode.Position, neighBourNode.Position);
                 if (GCost < neighBourNode.GScore)
                 {
                     neighBourNode.PreviousNodeIndex = currentNode.Index;
@@ -155,7 +155,6 @@ public class Astar
                         openList.Add(neighBourNode.Index);
                     }
                 }
-
                 wallsOffset.Dispose();
                 wallsOffsetCurrentNode.Dispose();
             }
@@ -178,7 +177,6 @@ public class Astar
         nodePath.Dispose();
         neighbourOffsetArray.Dispose();
     }
-
 
     [BurstCompile]
     private NativeList<int2> ReturnWallsDirection(Wall wall)
@@ -208,12 +206,10 @@ public class Astar
     [BurstCompile]
     private int EstimateDistanceCost(int2 position1, int2 position2)
     {
-        int xDistance = math.abs(position1.x - position2.x);
-        int yDistance = math.abs(position1.y - position2.y);
-        int remainder = math.abs(xDistance - yDistance);
-        return StraightCost * remainder;
+        return math.abs(position1.y - position2.y) + math.abs(position1.x - position2.x);
     }
 
+    [BurstCompile]
     private int CalculateFlatIndex(int2 position, int2 gridSize)
     {
         return position.x + position.y * gridSize.x;
@@ -255,13 +251,13 @@ public class Astar
 
         for (int i = 0; i < openList.Length; i++)
         {
-            if (currentNode.FScore > nodes[openList[0]].FScore)
+            if (currentNode.FScore > nodes[openList[i]].FScore)
             {
-                currentNode = nodes[openList[0]];
+                currentNode = nodes[openList[i]];
             }
         }
 
-        return currentNode.Index;
+        return CalculateFlatIndex(currentNode.Position, gridSize);
     }
 
     public struct Node

@@ -1,15 +1,12 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
-using Unity.Mathematics;
-using Unity.Collections;
-using System.Linq;
 
 public class Agent : MonoBehaviour
 {
     public int moveButton = 0;
     public float moveSpeed = 3;
     private Astar Astar = new();
-    private List<int2> path = new();
+    private List<Vector2Int> path = new();
     private Plane ground = new(Vector3.up, 0f);
     private MeshRenderer renderer;
     private GameObject targetVisual;
@@ -28,11 +25,7 @@ public class Agent : MonoBehaviour
         line.material.color = renderer.material.color;
     }
 
-    private void Start()
-    {
-    }
-
-    public void FindPathToTarget(int2 startPos, int2 endPos, Cell[,] grid)
+    public void FindPathToTarget(Vector2Int startPos, Vector2Int endPos, Cell[,] grid)
     {
         path = Astar.FindPathToTarget(startPos, endPos, grid);
         DrawPath();
@@ -59,7 +52,7 @@ public class Agent : MonoBehaviour
             Ray r = Camera.main.ScreenPointToRay(new Vector3(Input.mousePosition.x, Input.mousePosition.y, -10));
 
             Vector3 mousePos = MouseToWorld();
-            int2 targetPos = Vector3ToVector2Int(mousePos);
+            Vector2Int targetPos = Vector3ToVector2Int(mousePos);
             targetVisual.transform.position = Vector2IntToVector3(targetPos);
             FindPathToTarget(Vector3ToVector2Int(transform.position), targetPos, maze.grid);
         }
@@ -90,11 +83,11 @@ public class Agent : MonoBehaviour
         return worldPos;
     }
 
-    private int2 Vector3ToVector2Int(Vector3 pos)
+    private Vector2Int Vector3ToVector2Int(Vector3 pos)
     {
-        return new int2(Mathf.RoundToInt(pos.x), Mathf.RoundToInt(pos.z));
+        return new Vector2Int(Mathf.RoundToInt(pos.x), Mathf.RoundToInt(pos.z));
     }
-    private Vector3 Vector2IntToVector3(int2 pos, float YPos = 0)
+    private Vector3 Vector2IntToVector3(Vector2Int pos, float YPos = 0)
     {
         return new Vector3(Mathf.RoundToInt(pos.x), YPos, Mathf.RoundToInt(pos.y));
     }

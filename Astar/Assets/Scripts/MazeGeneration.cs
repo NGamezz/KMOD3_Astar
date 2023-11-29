@@ -53,14 +53,16 @@ public class MazeGeneration : MonoBehaviour
         {
             for (int y = 0; y < height; y++)
             {
-                grid[x, y] = new Cell();
-                grid[x, y].gridPosition = new Vector2Int(x, y);
-                grid[x, y].walls = Wall.DOWN | Wall.LEFT | Wall.RIGHT | Wall.UP;
+                grid[x, y] = new Cell
+                {
+                    gridPosition = new Vector2Int(x, y),
+                    walls = Wall.DOWN | Wall.LEFT | Wall.RIGHT | Wall.UP
+                };
             }
         }
 
-        Stack<Cell> cellStack = new Stack<Cell>();
-        List<Cell> visitedCells = new List<Cell>();
+        Stack<Cell> cellStack = new();
+        List<Cell> visitedCells = new();
         cellStack.Push(grid[0, 0]);
         Cell currentCell;
         while (cellStack.Count > 0)
